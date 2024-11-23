@@ -1,35 +1,35 @@
 /*
- * mod_pgsql for FreeSWITCH Modular Media Switching Software Library / Soft-Switch Application
+* mod_pgsql for FreeSWITCH Modular Media Switching Software Library / Soft-Switch Application
  * Copyright (C) 2005-2019, Anthony Minessale II <anthm@freeswitch.org>
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is FreeSWITCH Modular Media Switching Software Library / Soft-Switch Application
- *
- * The Initial Developer of the Original Code is
- * Anthony Minessale II <anthm@freeswitch.org>
- * Portions created by the Initial Developer are Copyright (C)
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- * Anthony Minessale II <anthm@freeswitch.org>
- * Eliot Gable <egable@gmail.com>
- * Seven Du <dujinfang@gmail.com>
- * Andrey Volk <andywolk@gmail.com>
- *
- * mod_pgsql.c -- PostgreSQL FreeSWITCH module
- *
- */
+*
+* Version: MPL 1.1
+*
+* The contents of this file are subject to the Mozilla Public License Version
+* 1.1 (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+* http://www.mozilla.org/MPL/
+*
+* Software distributed under the License is distributed on an "AS IS" basis,
+* WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+* for the specific language governing rights and limitations under the
+* License.
+*
+* The Original Code is FreeSWITCH Modular Media Switching Software Library / Soft-Switch Application
+*
+* The Initial Developer of the Original Code is
+* Anthony Minessale II <anthm@freeswitch.org>
+* Portions created by the Initial Developer are Copyright (C)
+* the Initial Developer. All Rights Reserved.
+*
+* Contributor(s):
+* Anthony Minessale II <anthm@freeswitch.org>
+* Eliot Gable <egable@gmail.com>
+* Seven Du <dujinfang@gmail.com>
+* Andrey Volk <andywolk@gmail.com>
+*
+* mod_pgsql.c -- PostgreSQL FreeSWITCH module
+*
+*/
 
 #define SWITCH_PGSQL_H
 
@@ -122,7 +122,7 @@ static int db_is_up(switch_pgsql_handle_t *handle)
 			max_tries = DEFAULT_PGSQL_RETRIES;
 	}
 
-	top:
+top:
 
 	if (!handle) {
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "No DB Handle\n");
@@ -153,7 +153,7 @@ static int db_is_up(switch_pgsql_handle_t *handle)
 
 	if (PQstatus(handle->con) == CONNECTION_BAD) {
 		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_WARNING, "PQstatus returned bad connection; reconnecting...\n");
-		reset:
+reset:
 		handle->state = SWITCH_PGSQL_STATE_ERROR;
 		PQreset(handle->con);
 		if (PQstatus(handle->con) == CONNECTION_BAD) {
@@ -168,7 +168,7 @@ static int db_is_up(switch_pgsql_handle_t *handle)
 	ret = 1;
 	goto done;
 
-	error:
+error:
 	err_str = pgsql_handle_get_error(handle);
 
 	if (PQstatus(handle->con) == CONNECTION_BAD) {
@@ -213,7 +213,7 @@ static int db_is_up(switch_pgsql_handle_t *handle)
 	switch_yield(1000000);
 	goto top;
 
-	done:
+done:
 
 	switch_safe_free(err_str);
 
@@ -282,8 +282,8 @@ switch_status_t pgsql_handle_affected_rows(switch_database_interface_handle_t *d
 
 switch_status_t pgsql_handle_new(switch_cache_db_database_interface_options_t database_interface_options, switch_database_interface_handle_t **dih)
 {
-	switch_pgsql_handle_t *new_handle = NULL;
-
+	switch_pgsql_handle_t *new_handle = NULL;	
+	
 	if (!(*dih = malloc(sizeof(**dih)))) {
 		goto err;
 	}
@@ -322,13 +322,13 @@ switch_status_t pgsql_handle_new(switch_cache_db_database_interface_options_t da
 
 	return SWITCH_STATUS_SUCCESS;
 
-	err:
+err:
 	switch_safe_free(*dih);
 
 	if (new_handle) {
 		switch_safe_free(new_handle->dsn);
 		switch_safe_free(new_handle);
-	}
+	}		
 
 	return SWITCH_STATUS_FALSE;
 }
@@ -350,7 +350,7 @@ switch_status_t pgsql_handle_disconnect(switch_pgsql_handle_t *handle)
 }
 
 switch_status_t pgsql_handle_connect(switch_pgsql_handle_t *handle)
-{
+{	
 	if (!handle) {
 		return SWITCH_STATUS_FALSE;
 	}
@@ -362,7 +362,7 @@ switch_status_t pgsql_handle_connect(switch_pgsql_handle_t *handle)
 
 	switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG1, "Connecting %s\n", handle->dsn);
 	PQinitSSL(0);
-
+	
 	handle->con = PQconnectdb(handle->dsn);
 	if (PQstatus(handle->con) != CONNECTION_OK) {
 		char *err_str;
@@ -471,7 +471,7 @@ switch_status_t pgsql_send_query(switch_pgsql_handle_t *handle, const char* sql)
 	}
 
 	return SWITCH_STATUS_SUCCESS;
-	error:
+error:
 	return SWITCH_STATUS_FALSE;
 }
 
@@ -516,7 +516,7 @@ switch_status_t pgsql_handle_exec_base_detailed(const char *file, const char *fu
 
 	return SWITCH_STATUS_SUCCESS;
 
-	error:
+error:
 	err_str = pgsql_handle_get_error(handle);
 
 	if (zstr(err_str)) {
@@ -554,11 +554,11 @@ switch_status_t pgsql_handle_exec_detailed(const char *file, const char *func, i
 	}
 
 	return pgsql_finish_results(handle);
-	error:
+error:
 	return SWITCH_STATUS_FALSE;
 }
 
-switch_status_t database_handle_exec_detailed(const char *file, const char *func, int line,
+switch_status_t database_handle_exec_detailed(const char *file, const char *func, int line, 
 	switch_database_interface_handle_t *dih, const char *sql, char **err)
 {
 	switch_pgsql_handle_t *handle;
@@ -602,16 +602,16 @@ switch_status_t database_handle_exec_string(switch_database_interface_handle_t *
 		goto done;
 	} else {
 		switch (result->status) {
-			#if PG_VERSION_NUM >= 90002
-			case PGRES_SINGLE_TUPLE:
-				/* Added in PostgreSQL 9.2 */
-				#endif
-			case PGRES_COMMAND_OK:
-			case PGRES_TUPLES_OK:
-				break;
-			default:
-				sstatus = SWITCH_STATUS_FALSE;
-				goto done;
+#if PG_VERSION_NUM >= 90002
+		case PGRES_SINGLE_TUPLE:
+			/* Added in PostgreSQL 9.2 */
+#endif
+		case PGRES_COMMAND_OK:
+		case PGRES_TUPLES_OK:
+			break;
+		default:
+			sstatus = SWITCH_STATUS_FALSE;
+			goto done;
 		}
 	}
 
@@ -622,7 +622,7 @@ switch_status_t database_handle_exec_string(switch_database_interface_handle_t *
 	val = PQgetvalue(result->result, 0, 0);
 	strncpy(resbuf, val, len);
 
-	done:
+done:
 
 	pgsql_free_result(&result);
 	if (pgsql_finish_results(handle) != SWITCH_STATUS_SUCCESS) {
@@ -631,7 +631,7 @@ switch_status_t database_handle_exec_string(switch_database_interface_handle_t *
 
 	return sstatus;
 
-	error:
+error:
 
 	pgsql_free_result(&result);
 
@@ -646,11 +646,11 @@ switch_status_t pgsql_next_result_timed(switch_pgsql_handle_t *handle, switch_pg
 	switch_time_t ctime;
 	unsigned int usec = msec * 1000;
 	char *err_str;
-	#ifndef _WIN32
+#ifndef _WIN32
 	struct pollfd fds[2] = { { 0 } };
-	#else
+#else
 	fd_set rs, es;
-	#endif
+#endif
 	int poll_res = 0;
 
 	if (!handle) {
@@ -669,7 +669,7 @@ switch_status_t pgsql_next_result_timed(switch_pgsql_handle_t *handle, switch_pg
 				while ((ctime = switch_micro_time_now()) - start <= usec) {
 					switch_time_t wait_time = (usec - (ctime - start)) / 1000;
 					/* Wait for the PostgreSQL socket to be ready for data reads. */
-					#ifndef _WIN32
+#ifndef _WIN32
 					fds[0].fd = handle->sock;
 					fds[0].events |= POLLIN;
 					fds[0].events |= POLLERR;
@@ -680,16 +680,16 @@ switch_status_t pgsql_next_result_timed(switch_pgsql_handle_t *handle, switch_pg
 					fds[0].events |= POLLRDBAND;
 
 					poll_res = poll(&fds[0], 1, wait_time);
-					#else
+#else
 					struct timeval wait = { (long)wait_time * 1000, 0 };
 					FD_ZERO(&rs);
 					FD_SET(handle->sock, &rs);
 					FD_ZERO(&es);
 					FD_SET(handle->sock, &es);
 					poll_res = select(0, &rs, 0, &es, &wait);
-					#endif
+#endif
 					if (poll_res > 0) {
-						#ifndef _WIN32
+#ifndef _WIN32
 						if (fds[0].revents & POLLHUP || fds[0].revents & POLLNVAL) {
 							switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "PGSQL socket closed or invalid while waiting for result for query (%s)\n", handle->sql);
 							goto error;
@@ -697,264 +697,328 @@ switch_status_t pgsql_next_result_timed(switch_pgsql_handle_t *handle, switch_pg
 							switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Poll error trying to read PGSQL socket for query (%s)\n", handle->sql);
 							goto error;
 						} else if (fds[0].revents & POLLIN || fds[0].revents & POLLPRI || fds[0].revents & POLLRDNORM || fds[0].revents & POLLRDBAND) {
-							#else
-							if (FD_ISSET(handle->sock, &rs)) {
-								#endif
-								/* Then try to consume any input waiting. */
-								if (PQconsumeInput(handle->con)) {
-									if (PQstatus(handle->con) == CONNECTION_BAD) {
-										switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Connection terminated while waiting for result.\n");
-										handle->state = SWITCH_PGSQL_STATE_ERROR;
-										goto error;
-									}
-
-									/* And check to see if we have a full result ready for reading */
-									if (!PQisBusy(handle->con)) {
-										/* If we can pull a full result without blocking, then break this loop */
-										break;
-									}
-								} else {
-									/* If we had an error trying to consume input, report it and cancel the query. */
-									err_str = pgsql_handle_get_error(handle);
-									switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "An error occurred trying to consume input for query (%s): %s\n", handle->sql, err_str);
-									switch_safe_free(err_str);
-									pgsql_cancel(handle);
+#else
+						if (FD_ISSET(handle->sock, &rs)) {
+#endif						
+							/* Then try to consume any input waiting. */
+							if (PQconsumeInput(handle->con)) {
+								if (PQstatus(handle->con) == CONNECTION_BAD) {
+									switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Connection terminated while waiting for result.\n");
+									handle->state = SWITCH_PGSQL_STATE_ERROR;
 									goto error;
 								}
-							}
-						} else if (poll_res == -1) {
-							switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Poll failed trying to read PGSQL socket for query (%s)\n", handle->sql);
-							goto error;
-						}
-					}
 
-					/* If we broke the loop above because of a timeout, report that and cancel the query. */
-					if (ctime - start > usec) {
-						switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Query (%s) took too long to complete or database not responding.\n", handle->sql);
-						pgsql_cancel(handle);
+								/* And check to see if we have a full result ready for reading */
+								if (!PQisBusy(handle->con)) {
+									/* If we can pull a full result without blocking, then break this loop */
+									break;
+								}
+							} else {
+								/* If we had an error trying to consume input, report it and cancel the query. */
+								err_str = pgsql_handle_get_error(handle);
+								switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "An error occurred trying to consume input for query (%s): %s\n", handle->sql, err_str);
+								switch_safe_free(err_str);
+								pgsql_cancel(handle);
+								goto error;
+							}
+						}
+					} else if (poll_res == -1) {
+						switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Poll failed trying to read PGSQL socket for query (%s)\n", handle->sql);
 						goto error;
 					}
 				}
-			} else {
-				/* If we had an error trying to consume input, report it and cancel the query. */
-				err_str = pgsql_handle_get_error(handle);
-				switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "An error occurred trying to consume input for query (%s): %s\n", handle->sql, err_str);
-				switch_safe_free(err_str);
-				/* pgsql_cancel(handle); */
-				goto error;
-			}
-		}
 
-		/* At this point, we know we can read a full result without blocking. */
-		if (!(res = malloc(sizeof(switch_pgsql_result_t)))) {
-			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Malloc failed!\n");
-			goto error;
-		}
-
-		memset(res, 0, sizeof(switch_pgsql_result_t));
-
-		res->result = PQgetResult(handle->con);
-		if (res->result) {
-			affected_rows = PQcmdTuples(res->result);
-			if (!zstr(affected_rows)) {
-				handle->affected_rows = atoi(affected_rows);
-			}
-
-			*result_out = res;
-			res->status = PQresultStatus(res->result);
-			switch (res->status) {
-				#if PG_VERSION_NUM >= 90002
-				case PGRES_SINGLE_TUPLE:
-					/* Added in PostgreSQL 9.2 */
-					#endif
-				case PGRES_TUPLES_OK:
-				{
-					res->rows = PQntuples(res->result);
-					res->cols = PQnfields(res->result);
-				}
-				break;
-				#if PG_VERSION_NUM >= 90001
-				case PGRES_COPY_BOTH:
-					/* Added in PostgreSQL 9.1 */
-					#endif
-				case PGRES_COPY_OUT:
-				case PGRES_COPY_IN:
-				case PGRES_COMMAND_OK:
-					break;
-					#if PG_VERSION_NUM >= 140001
-				case PGRES_PIPELINE_ABORTED:
-				case PGRES_PIPELINE_SYNC:
-					break;
-					#endif
-				case PGRES_EMPTY_QUERY:
-					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_EMPTY_QUERY\n", handle->sql);
-				case PGRES_BAD_RESPONSE:
-					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_BAD_RESPONSE\n", handle->sql);
-				case PGRES_NONFATAL_ERROR:
-					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_NONFATAL_ERROR\n", handle->sql);
-				case PGRES_FATAL_ERROR:
-					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_FATAL_ERROR\n", handle->sql);
-					res->err = PQresultErrorMessage(res->result);
+				/* If we broke the loop above because of a timeout, report that and cancel the query. */
+				if (ctime - start > usec) {
+					switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Query (%s) took too long to complete or database not responding.\n", handle->sql);
+					pgsql_cancel(handle);
 					goto error;
-					break;
+				}
 			}
 		} else {
-			free(res);
-			res = NULL;
-			*result_out = NULL;
+			/* If we had an error trying to consume input, report it and cancel the query. */
+			err_str = pgsql_handle_get_error(handle);
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "An error occurred trying to consume input for query (%s): %s\n", handle->sql, err_str);
+			switch_safe_free(err_str);
+			/* pgsql_cancel(handle); */
+			goto error;
+		}
+	}
+
+	/* At this point, we know we can read a full result without blocking. */
+	if (!(res = malloc(sizeof(switch_pgsql_result_t)))) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Malloc failed!\n");
+		goto error;
+	}
+
+	memset(res, 0, sizeof(switch_pgsql_result_t));
+
+	res->result = PQgetResult(handle->con);
+	if (res->result) {
+		affected_rows = PQcmdTuples(res->result);
+		if (!zstr(affected_rows)) {
+			handle->affected_rows = atoi(affected_rows);
 		}
 
-		return SWITCH_STATUS_SUCCESS;
-		error:
+		*result_out = res;
+		res->status = PQresultStatus(res->result);
+		switch (res->status) {
+#if PG_VERSION_NUM >= 90002
+		case PGRES_SINGLE_TUPLE:
+			/* Added in PostgreSQL 9.2 */
+#endif
+		case PGRES_TUPLES_OK:
+		{
+			res->rows = PQntuples(res->result);
+			res->cols = PQnfields(res->result);
+		}
+		break;
+#if PG_VERSION_NUM >= 90001
+		case PGRES_COPY_BOTH:
+			/* Added in PostgreSQL 9.1 */
+#endif
+		case PGRES_COPY_OUT:
+		case PGRES_COPY_IN:
+		case PGRES_COMMAND_OK:
+			break;
+#if PG_VERSION_NUM >= 140001
+		case PGRES_PIPELINE_ABORTED:
+		case PGRES_PIPELINE_SYNC:
+			break;
+#endif
+		case PGRES_EMPTY_QUERY:
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_EMPTY_QUERY\n", handle->sql);
+		case PGRES_BAD_RESPONSE:
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_BAD_RESPONSE\n", handle->sql);
+		case PGRES_NONFATAL_ERROR:
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_NONFATAL_ERROR\n", handle->sql);
+		case PGRES_FATAL_ERROR:
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Query (%s) returned PGRES_FATAL_ERROR\n", handle->sql);
+			res->err = PQresultErrorMessage(res->result);
+			goto error;
+			break;
+		}
+	} else {
+		free(res);
+		res = NULL;
+		*result_out = NULL;
+	}
 
-		/* Make sure the failed connection does not have any transactions marked as in progress */
-		pgsql_flush(handle);
+	return SWITCH_STATUS_SUCCESS;
+error:
 
-		/* Try to reconnect to the DB if we were dropped */
-		db_is_up(handle);
+	/* Make sure the failed connection does not have any transactions marked as in progress */
+	pgsql_flush(handle);
 
+	/* Try to reconnect to the DB if we were dropped */
+	db_is_up(handle);
+
+	return SWITCH_STATUS_FALSE;
+}
+
+switch_status_t pgsql_cancel_real(const char *file, const char *func, int line, switch_pgsql_handle_t *handle)
+{
+	switch_status_t ret = SWITCH_STATUS_SUCCESS;
+	char err_buf[256];
+	PGcancel *cancel = NULL;
+
+	memset(err_buf, 0, 256);
+	cancel = PQgetCancel(handle->con);
+
+	if (!PQcancel(cancel, err_buf, 256)) {
+		switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_CRIT, "Failed to cancel long-running query (%s): %s\n", handle->sql, err_buf);
+		ret = SWITCH_STATUS_FALSE;
+	}
+
+	PQfreeCancel(cancel);
+	pgsql_flush(handle);
+
+	return ret;
+}
+
+switch_status_t pgsql_SQLSetAutoCommitAttr(switch_database_interface_handle_t *dih, switch_bool_t on)
+{
+	switch_pgsql_handle_t *handle;
+
+	if (!dih) {
 		return SWITCH_STATUS_FALSE;
 	}
 
-	switch_status_t pgsql_cancel_real(const char *file, const char *func, int line, switch_pgsql_handle_t *handle)
-	{
-		switch_status_t ret = SWITCH_STATUS_SUCCESS;
-		char err_buf[256];
-		PGcancel *cancel = NULL;
+	handle = dih->handle;
 
-		memset(err_buf, 0, 256);
-		cancel = PQgetCancel(handle->con);
+	if (!handle)
+		return SWITCH_STATUS_FALSE;
 
-		if (!PQcancel(cancel, err_buf, 256)) {
-			switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_CRIT, "Failed to cancel long-running query (%s): %s\n", handle->sql, err_buf);
-			ret = SWITCH_STATUS_FALSE;
-		}
-
-		PQfreeCancel(cancel);
-		pgsql_flush(handle);
-
-		return ret;
+	if (on) {
+		handle->auto_commit = SWITCH_TRUE;
+	} else {
+		handle->auto_commit = SWITCH_FALSE;
 	}
 
-	switch_status_t pgsql_SQLSetAutoCommitAttr(switch_database_interface_handle_t *dih, switch_bool_t on)
-	{
-		switch_pgsql_handle_t *handle;
+	return SWITCH_STATUS_SUCCESS;
+}
 
-		if (!dih) {
-			return SWITCH_STATUS_FALSE;
-		}
+switch_status_t pgsql_SQLEndTran(switch_pgsql_handle_t *handle, switch_bool_t commit)
+{
+	char * err_str = NULL;
 
-		handle = dih->handle;
-
-		if (!handle)
-			return SWITCH_STATUS_FALSE;
-
-		if (on) {
-			handle->auto_commit = SWITCH_TRUE;
-		} else {
-			handle->auto_commit = SWITCH_FALSE;
-		}
-
-		return SWITCH_STATUS_SUCCESS;
+	if (!handle) {
+		return SWITCH_STATUS_FALSE;
 	}
 
-	switch_status_t pgsql_SQLEndTran(switch_pgsql_handle_t *handle, switch_bool_t commit)
-	{
-		char * err_str = NULL;
-
-		if (!handle) {
+	if (commit) {
+		if (!PQsendQuery(handle->con, "COMMIT")) {
+			err_str = pgsql_handle_get_error(handle);
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Could not commit transaction: %s\n", err_str);
+			switch_safe_free(err_str);
 			return SWITCH_STATUS_FALSE;
 		}
+	} else {
+		if (!PQsendQuery(handle->con, "ROLLBACK")) {
+			err_str = pgsql_handle_get_error(handle);
+			switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Could not rollback transaction: %s\n", err_str);
+			switch_safe_free(err_str);
+			return SWITCH_STATUS_FALSE;
+		}
+	}
+	handle->in_txn = SWITCH_FALSE;
 
-		if (commit) {
-			if (!PQsendQuery(handle->con, "COMMIT")) {
-				err_str = pgsql_handle_get_error(handle);
-				switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Could not commit transaction: %s\n", err_str);
-				switch_safe_free(err_str);
-				return SWITCH_STATUS_FALSE;
+	return SWITCH_STATUS_SUCCESS;
+}
+
+switch_status_t database_commit(switch_database_interface_handle_t *dih)
+{
+	switch_status_t result;
+
+	switch_pgsql_handle_t *handle;
+
+	if (!dih) {
+		return SWITCH_STATUS_FALSE;
+	}
+
+	handle = dih->handle;
+
+	if (!handle)
+		return SWITCH_STATUS_FALSE;
+
+	result = pgsql_SQLEndTran(handle, SWITCH_TRUE);
+	result = pgsql_SQLSetAutoCommitAttr(dih, SWITCH_TRUE) && result;
+	result = pgsql_finish_results(handle) && result;
+
+	return result;
+}
+
+switch_status_t database_rollback(switch_database_interface_handle_t *dih)
+{
+	switch_pgsql_handle_t *handle;
+	switch_status_t result;
+
+	if (!dih) {
+		return SWITCH_STATUS_FALSE;
+	}
+
+	handle = dih->handle;
+
+	if (!handle)
+		return SWITCH_STATUS_FALSE;
+
+	result = pgsql_SQLEndTran(handle, SWITCH_FALSE);
+	result = pgsql_SQLSetAutoCommitAttr(dih, SWITCH_TRUE) && result;
+	result = pgsql_finish_results(handle) && result;
+
+	return result;
+}
+
+switch_status_t pgsql_handle_callback_exec_detailed(const char *file, const char *func, int line,
+	switch_database_interface_handle_t *dih, const char *sql, switch_core_db_callback_func_t callback, void *pdata, char **err)
+{
+	char *err_str = NULL;
+	int row = 0, col = 0, err_cnt = 0;
+	switch_pgsql_result_t *result = NULL;
+
+	switch_pgsql_handle_t *handle;
+
+	if (!dih) {
+		return SWITCH_STATUS_FALSE;
+	}
+
+	handle = dih->handle;
+
+	if (!handle) {
+		return SWITCH_STATUS_FALSE;
+	}
+
+	handle->affected_rows = 0;
+
+	switch_assert(callback != NULL);
+
+	if (pgsql_handle_exec_base(handle, sql, err) == SWITCH_STATUS_FALSE) {
+		goto error;
+	}
+
+	if (pgsql_next_result(handle, &result) == SWITCH_STATUS_FALSE) {
+		err_cnt++;
+		err_str = pgsql_handle_get_error(handle);
+
+		if (result && !zstr(result->err)) {
+			switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: [%s]\n[%s]\n", sql, switch_str_nil(result->err));
+		}
+
+		if (!zstr(err_str)) {
+			switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: [%s]\n[%s]\n", sql, switch_str_nil(err_str));
+		}
+
+		switch_safe_free(err_str);
+	}
+
+	while (result != NULL) {
+		/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result with %d rows and %d columns.\n", result->rows, result->cols);*/
+		for (row = 0; row < result->rows; ++row) {
+			char **names;
+			char **vals;
+
+			names = calloc(result->cols, sizeof(*names));
+			vals = calloc(result->cols, sizeof(*vals));
+
+			switch_assert(names && vals);
+
+			for (col = 0; col < result->cols; ++col) {
+				char * tmp;
+				size_t len;
+
+				tmp = PQfname(result->result, col);
+				if (tmp) {
+					len = strlen(tmp);
+					names[col] = malloc(len + 1);
+					snprintf(names[col], len + 1, "%s", tmp);
+
+					len = PQgetlength(result->result, row, col);
+					vals[col] = malloc(len + 1);
+					tmp = PQgetvalue(result->result, row, col);
+					snprintf(vals[col], len + 1, "%s", tmp);
+					/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result row %d, col %d: %s => %s\n", row, col, names[col], vals[col]);*/
+				} else {
+					/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result row %d, col %d.\n", row, col);*/
+					switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: Column number %d out of range\n", col);
+				}
 			}
-		} else {
-			if (!PQsendQuery(handle->con, "ROLLBACK")) {
-				err_str = pgsql_handle_get_error(handle);
-				switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_CRIT, "Could not rollback transaction: %s\n", err_str);
-				switch_safe_free(err_str);
-				return SWITCH_STATUS_FALSE;
+
+			/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Executing callback for row %d...\n", row);*/
+			if (callback(pdata, result->cols, vals, names)) {
+				pgsql_finish_results(handle); /* Makes sure next call to switch_pgsql_next_result will return NULL */
+				row = result->rows;                  /* Makes us exit the for loop */
 			}
-		}
-		handle->in_txn = SWITCH_FALSE;
 
-		return SWITCH_STATUS_SUCCESS;
-	}
+			for (col = 0; col < result->cols; ++col) {
+				free(names[col]);
+				free(vals[col]);
+			}
 
-	switch_status_t database_commit(switch_database_interface_handle_t *dih)
-	{
-		switch_status_t result;
-
-		switch_pgsql_handle_t *handle;
-
-		if (!dih) {
-			return SWITCH_STATUS_FALSE;
+			free(names);
+			free(vals);
 		}
 
-		handle = dih->handle;
-
-		if (!handle)
-			return SWITCH_STATUS_FALSE;
-
-		result = pgsql_SQLEndTran(handle, SWITCH_TRUE);
-		result = pgsql_SQLSetAutoCommitAttr(dih, SWITCH_TRUE) && result;
-		result = pgsql_finish_results(handle) && result;
-
-		return result;
-	}
-
-	switch_status_t database_rollback(switch_database_interface_handle_t *dih)
-	{
-		switch_pgsql_handle_t *handle;
-		switch_status_t result;
-
-		if (!dih) {
-			return SWITCH_STATUS_FALSE;
-		}
-
-		handle = dih->handle;
-
-		if (!handle)
-			return SWITCH_STATUS_FALSE;
-
-		result = pgsql_SQLEndTran(handle, SWITCH_FALSE);
-		result = pgsql_SQLSetAutoCommitAttr(dih, SWITCH_TRUE) && result;
-		result = pgsql_finish_results(handle) && result;
-
-		return result;
-	}
-
-	switch_status_t pgsql_handle_callback_exec_detailed(const char *file, const char *func, int line,
-		switch_database_interface_handle_t *dih, const char *sql, switch_core_db_callback_func_t callback, void *pdata, char **err)
-	{
-		char *err_str = NULL;
-		int row = 0, col = 0, err_cnt = 0;
-		switch_pgsql_result_t *result = NULL;
-
-		switch_pgsql_handle_t *handle;
-
-		if (!dih) {
-			return SWITCH_STATUS_FALSE;
-		}
-
-		handle = dih->handle;
-
-		if (!handle) {
-			return SWITCH_STATUS_FALSE;
-		}
-
-		handle->affected_rows = 0;
-
-		switch_assert(callback != NULL);
-
-		if (pgsql_handle_exec_base(handle, sql, err) == SWITCH_STATUS_FALSE) {
-			goto error;
-		}
+		pgsql_free_result(&result);
 
 		if (pgsql_next_result(handle, &result) == SWITCH_STATUS_FALSE) {
 			err_cnt++;
@@ -967,127 +1031,63 @@ switch_status_t pgsql_next_result_timed(switch_pgsql_handle_t *handle, switch_pg
 			if (!zstr(err_str)) {
 				switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: [%s]\n[%s]\n", sql, switch_str_nil(err_str));
 			}
-
 			switch_safe_free(err_str);
 		}
-
-		while (result != NULL) {
-			/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result with %d rows and %d columns.\n", result->rows, result->cols);*/
-			for (row = 0; row < result->rows; ++row) {
-				char **names;
-				char **vals;
-
-				names = calloc(result->cols, sizeof(*names));
-				vals = calloc(result->cols, sizeof(*vals));
-
-				switch_assert(names && vals);
-
-				for (col = 0; col < result->cols; ++col) {
-					char * tmp;
-					size_t len;
-
-					tmp = PQfname(result->result, col);
-					if (tmp) {
-						len = strlen(tmp);
-						names[col] = malloc(len + 1);
-						snprintf(names[col], len + 1, "%s", tmp);
-
-						len = PQgetlength(result->result, row, col);
-						vals[col] = malloc(len + 1);
-						tmp = PQgetvalue(result->result, row, col);
-						snprintf(vals[col], len + 1, "%s", tmp);
-						/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result row %d, col %d: %s => %s\n", row, col, names[col], vals[col]);*/
-					} else {
-						/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Processing result row %d, col %d.\n", row, col);*/
-						switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: Column number %d out of range\n", col);
-					}
-				}
-
-				/*switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "Executing callback for row %d...\n", row);*/
-				if (callback(pdata, result->cols, vals, names)) {
-					pgsql_finish_results(handle); /* Makes sure next call to switch_pgsql_next_result will return NULL */
-					row = result->rows;                  /* Makes us exit the for loop */
-				}
-
-				for (col = 0; col < result->cols; ++col) {
-					free(names[col]);
-					free(vals[col]);
-				}
-
-				free(names);
-				free(vals);
-			}
-
-			pgsql_free_result(&result);
-
-			if (pgsql_next_result(handle, &result) == SWITCH_STATUS_FALSE) {
-				err_cnt++;
-				err_str = pgsql_handle_get_error(handle);
-
-				if (result && !zstr(result->err)) {
-					switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: [%s]\n[%s]\n", sql, switch_str_nil(result->err));
-				}
-
-				if (!zstr(err_str)) {
-					switch_log_printf(SWITCH_CHANNEL_ID_LOG, file, func, line, NULL, SWITCH_LOG_ERROR, "ERR: [%s]\n[%s]\n", sql, switch_str_nil(err_str));
-				}
-				switch_safe_free(err_str);
-			}
-		}
-
-		if (err_cnt) {
-			goto error;
-		}
-
-		return SWITCH_STATUS_SUCCESS;
-		error:
-
-		return SWITCH_STATUS_FALSE;
 	}
 
-	SWITCH_MODULE_LOAD_FUNCTION(mod_pgsql_load)
-	{
-		switch_database_interface_t *database_interface;
-
-		supported_prefixes[0] = (char *)"pgsql";
-		supported_prefixes[1] = (char *)"postgres";
-		supported_prefixes[2] = (char *)"postgresql";
-
-		/* connect my internal structure to the blank pointer passed to me */
-		*module_interface = switch_loadable_module_create_module_interface(pool, modname);
-		MODULE_INTERFACE = *module_interface;
-
-		database_interface = (switch_database_interface_t *)switch_loadable_module_create_interface(*module_interface, SWITCH_DATABASE_INTERFACE);
-		database_interface->flags = 0;
-		database_interface->interface_name = modname;
-		database_interface->prefixes = supported_prefixes;
-		database_interface->handle_new = pgsql_handle_new;
-		database_interface->handle_destroy = pgsql_handle_destroy;
-		database_interface->flush = database_flush;
-		database_interface->exec_detailed = database_handle_exec_detailed;
-		database_interface->exec_string = database_handle_exec_string;
-		database_interface->affected_rows = pgsql_handle_affected_rows;
-		database_interface->sql_set_auto_commit_attr = pgsql_SQLSetAutoCommitAttr;
-		database_interface->commit = database_commit;
-		database_interface->rollback = database_rollback;
-		database_interface->callback_exec_detailed = pgsql_handle_callback_exec_detailed;
-
-		/* indicate that the module should continue to be loaded */
-		return SWITCH_STATUS_SUCCESS;
+	if (err_cnt) {
+		goto error;
 	}
 
-	SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_pgsql_shutdown)
-	{
-		return SWITCH_STATUS_UNLOAD;
-	}
+	return SWITCH_STATUS_SUCCESS;
+error:
 
-	/* For Emacs:
-	 * Local Variables:
-	 * mode:c
-	 * indent-tabs-mode:t
-	 * tab-width:4
-	 * c-basic-offset:4
-	 * End:
-	 * For VIM:
-	 * vim:set softtabstop=4 shiftwidth=4 tabstop=4 noet:
-	 */
+	return SWITCH_STATUS_FALSE;
+}
+
+SWITCH_MODULE_LOAD_FUNCTION(mod_pgsql_load)
+{
+	switch_database_interface_t *database_interface;
+
+	supported_prefixes[0] = (char *)"pgsql";
+	supported_prefixes[1] = (char *)"postgres";
+	supported_prefixes[2] = (char *)"postgresql";
+
+	/* connect my internal structure to the blank pointer passed to me */
+	*module_interface = switch_loadable_module_create_module_interface(pool, modname);
+	MODULE_INTERFACE = *module_interface;
+
+	database_interface = (switch_database_interface_t *)switch_loadable_module_create_interface(*module_interface, SWITCH_DATABASE_INTERFACE);
+	database_interface->flags = 0;
+	database_interface->interface_name = modname;
+	database_interface->prefixes = supported_prefixes;
+	database_interface->handle_new = pgsql_handle_new;
+	database_interface->handle_destroy = pgsql_handle_destroy;
+	database_interface->flush = database_flush;
+	database_interface->exec_detailed = database_handle_exec_detailed;
+	database_interface->exec_string = database_handle_exec_string;
+	database_interface->affected_rows = pgsql_handle_affected_rows;
+	database_interface->sql_set_auto_commit_attr = pgsql_SQLSetAutoCommitAttr;
+	database_interface->commit = database_commit;
+	database_interface->rollback = database_rollback;
+	database_interface->callback_exec_detailed = pgsql_handle_callback_exec_detailed;
+	
+	/* indicate that the module should continue to be loaded */
+	return SWITCH_STATUS_SUCCESS;
+}
+
+SWITCH_MODULE_SHUTDOWN_FUNCTION(mod_pgsql_shutdown)
+{
+	return SWITCH_STATUS_UNLOAD;
+}
+
+/* For Emacs:
+ * Local Variables:
+ * mode:c
+ * indent-tabs-mode:t
+ * tab-width:4
+ * c-basic-offset:4
+ * End:
+ * For VIM:
+ * vim:set softtabstop=4 shiftwidth=4 tabstop=4 noet:
+ */

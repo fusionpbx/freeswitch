@@ -3772,27 +3772,35 @@ void sofia_presence_handle_sip_i_subscribe(int status,
 
 	if (!strcmp("as-feature-event", event)) {
 		char key[128] = "";
+		uint8_t res;
 		switch_event_t *v_event = NULL;
 
-		if (sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, sizeof(key), &v_event, NULL, NULL, NULL)) {
-			if (v_event) {
-				switch_event_destroy(&v_event);
-			}
+		res = sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, sizeof(key), &v_event, NULL, NULL, NULL);
+
+		if (v_event) {
+			switch_event_destroy(&v_event);
+		}
+
+		if (res) {
 			goto end;
 		}
 	} else if (sofia_test_pflag(profile, PFLAG_AUTH_SUBSCRIPTIONS)) {
 		char keybuf[128] = "";
 		char *key;
 		size_t keylen;
+		uint8_t res;
 		switch_event_t *v_event = NULL;
 
 		key = keybuf;
 		keylen = sizeof(keybuf);
 
-		if (sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, (uint32_t)keylen, &v_event, NULL, NULL, NULL)) {
-			if (v_event) {
-				switch_event_destroy(&v_event);
-			}
+		res = sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, (uint32_t)keylen, &v_event, NULL, NULL, NULL);
+
+		if (v_event) {
+			switch_event_destroy(&v_event);
+		}
+
+		if (res) {
 			goto end;
 		}
 	}
@@ -4739,15 +4747,19 @@ void sofia_presence_handle_sip_i_message(int status,
 			char keybuf[128] = "";
 			char *key;
 			size_t keylen;
+			uint8_t res;
 			switch_event_t *v_event = NULL;
 
 			key = keybuf;
 			keylen = sizeof(keybuf);
 
-			if (sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, (uint32_t)keylen, &v_event, NULL, NULL, NULL)) {
-				if (v_event) {
-					switch_event_destroy(&v_event);
-				}
+			res = sofia_reg_handle_register(nua, profile, nh, sip, de, REG_INVITE, key, (uint32_t)keylen, &v_event, NULL, NULL, NULL);
+			
+			if (v_event) {
+				switch_event_destroy(&v_event);
+			}
+
+			if (res) {
 				goto end;
 			}
 

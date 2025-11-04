@@ -2234,6 +2234,23 @@ static void _send_presence_notify(sofia_profile_t *profile,
 		sofia_transport_t transport = sofia_glue_str2transport(tp);
 
 		switch (transport) {
+			char * colon;
+			char * at;
+			char * username;
+			int username_lenght;
+
+		case SOFIA_TRANSPORT_WSS:
+			switch_strdup(username, full_from);
+			colon = strchr(username, ':');
+			at = strchr(username, '@');
+			username_lenght = at - colon;
+			username = colon;
+			username[username_lenght] = '\0';
+			contact = switch_mprintf("sip%s@%s:%s;transport=wss", username, remote_ip, remote_port);
+
+			contact_str = profile->public_url;
+
++			break;
 		case SOFIA_TRANSPORT_TCP:
 			contact_str = profile->tcp_public_contact;
 			break;
@@ -2249,6 +2266,23 @@ static void _send_presence_notify(sofia_profile_t *profile,
 	} else {
 		sofia_transport_t transport = sofia_glue_str2transport(tp);
 		switch (transport) {
+			char * colon;
+			char * at;
+			char * username;
+			int username_lenght;
+
+		case SOFIA_TRANSPORT_WSS:
+			switch_strdup(username, full_from);
+			colon = strchr(username, ':');
+			at = strchr(username, '@');
+			username_lenght = at - colon;
+			username = colon;
+			username[username_lenght] = '\0';
+			contact = switch_mprintf("sip%s@%s:%s;transport=wss", username, remote_ip, remote_port);
+
+			contact_str = profile->url;
+
+			break;
 		case SOFIA_TRANSPORT_TCP:
 			contact_str = profile->tcp_contact;
 			break;

@@ -3303,6 +3303,9 @@ SWITCH_STANDARD_APP(callcenter_function)
 	} else {
 		switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(member_session), SWITCH_LOG_DEBUG, "Member %s <%s> is answered by an agent in queue %s\n", switch_str_nil(switch_channel_get_variable(member_channel, "caller_id_name")), switch_str_nil(switch_channel_get_variable(member_channel, "caller_id_number")), queue_name);
 
+		/* Stop the announcement when the agent answers the call */
+        switch_ivr_stop_displace_session(member_session, queue->announce);
+
 		/* Update some channel variables for xml_cdr needs */
 		switch_channel_set_variable_printf(member_channel, "cc_cause", "%s", "answered");
 		if ((queue = get_queue(queue_name))) {

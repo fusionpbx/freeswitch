@@ -37,6 +37,18 @@
 
 #define TDD_LEAD 10
 
+/*
+ * Compatibility with libspandsp > 0.0.5
+ * The old constant names were renamed
+ */
+#ifndef V18_MODE_5BIT_4545
+#define V18_MODE_5BIT_4545 V18_MODE_WEITBRECHT_5BIT_4545
+#endif
+#ifndef V18_MODE_5BIT_50
+#define V18_MODE_5BIT_50 V18_MODE_WEITBRECHT_5BIT_50
+#endif
+
+
 typedef struct {
 	switch_core_session_t *session;
 	v18_state_t *tdd_state;
@@ -213,7 +225,7 @@ switch_status_t spandsp_tdd_send_session(switch_core_session_t *session, const c
 		return SWITCH_STATUS_FALSE;
 	}
 
-	tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL);
+	tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL, NULL, NULL);
 
 
 	v18_put(tdd_state, text, -1);
@@ -260,7 +272,7 @@ switch_status_t spandsp_tdd_encode_session(switch_core_session_t *session, const
 	}
 
 	pvt->session = session;
-	pvt->tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL);
+	pvt->tdd_state = v18_init(NULL, TRUE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, NULL, NULL, NULL);
 	pvt->head_lead = TDD_LEAD;
 
 	v18_put(pvt->tdd_state, text, -1);
@@ -338,7 +350,7 @@ switch_status_t spandsp_tdd_decode_session(switch_core_session_t *session)
 	}
 
 	pvt->session = session;
-	pvt->tdd_state = v18_init(NULL, FALSE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, pvt);
+	pvt->tdd_state = v18_init(NULL, FALSE, get_v18_mode(session), V18_AUTOMODING_GLOBAL, put_text_msg, pvt, NULL, NULL);
 
 	if ((status = switch_core_media_bug_add(session, "spandsp_tdd_decode", NULL,
 						tdd_decode_callback, pvt, 0, SMBF_READ_REPLACE | SMBF_NO_PAUSE, &bug)) != SWITCH_STATUS_SUCCESS) {

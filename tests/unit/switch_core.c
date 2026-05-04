@@ -53,7 +53,6 @@ FST_CORE_BEGIN("./conf")
 		}
 		FST_TEARDOWN_END()
 
-<<<<<<< HEAD
 
 		FST_TEST_BEGIN(test_switch_regex)
 		{
